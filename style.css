@@ -1,0 +1,7 @@
+
+.grid-container {
+  display: grid;
+  border-style: solid;
+  width: 500px;
+  height: 500px;
+}

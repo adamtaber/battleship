@@ -8,6 +8,7 @@ class BattleshipFactory {
 
   hit() {
     this.hits += 1;
+    this.isSunk();
   }
 
   isSunk() {

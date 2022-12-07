@@ -29,9 +29,9 @@ test('places ship horizontally on board', () => {
   let board = new GameboardFactory();
   board.createBoard();
   board.placeShipHorizontal(ship, ship.length, 0, 0);
-  expect(board.boardArray[0][0] && board.boardArray[0][1]).toBe(ship);
-  expect(board.boardArray[0][2]).toBe('');
-  expect(board.boardArray[1][0]).toBe('');
+  expect(board.boardArray[0][0][0] && board.boardArray[0][1][0]).toBe(ship);
+  expect(board.boardArray[0][2][0]).toBe(undefined);
+  expect(board.boardArray[1][0][0]).toBe(undefined);
 })
 
 test('places ship vertically on board', () => {
@@ -39,9 +39,9 @@ test('places ship vertically on board', () => {
   let board = new GameboardFactory();
   board.createBoard();
   board.placeShipVertical(ship, ship.length, 2, 0);
-  expect(board.boardArray[1][0] && board.boardArray[2][0]).toBe(ship);
-  expect(board.boardArray[0][0]).toBe('');
-  expect(board.boardArray[1][1]).toBe('');
+  expect(board.boardArray[1][0][0] && board.boardArray[2][0][0]).toBe(ship);
+  expect(board.boardArray[0][0][0]).toBe(undefined);
+  expect(board.boardArray[1][1][0]).toBe(undefined);
 })
 
 test('attack on empty square returns a miss', () => {
@@ -59,7 +59,7 @@ test('attack on ship square returns a hit', () => {
   board.createBoard();
   board.placeShipVertical(ship, ship.length, 2, 0);
   board.receiveAttack(1, 0);
-  expect(board.boardArray[1][0]).toBe('hit');
+  expect(board.boardArray[1][0][1]).toBe('hit');
 })
 
 test('attack on ship increases hit count', () => {
@@ -69,4 +69,23 @@ test('attack on ship increases hit count', () => {
   board.placeShipVertical(ship, ship.length, 2, 0);
   board.receiveAttack(1, 0);
   expect(ship.hits).toBe(1);
+})
+
+test('AllShipsSunk returns true when all ships are sunk', () => {
+  let ship = new BattleshipFactory(2);
+  let board = new GameboardFactory();
+  board.createBoard();
+  board.placeShipVertical(ship, ship.length, 2, 0);
+  board.receiveAttack(1, 0);
+  board.receiveAttack(2, 0);
+  expect(board.allShipsSunk()).toBe(true);
+})
+
+test('AllShipsSunk returns false when not all ships are sunk', () => {
+  let ship = new BattleshipFactory(2);
+  let board = new GameboardFactory();
+  board.createBoard();
+  board.placeShipVertical(ship, ship.length, 2, 0);
+  board.receiveAttack(1, 0);
+  expect(board.allShipsSunk()).toBe(false);
 })
