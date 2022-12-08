@@ -42,8 +42,9 @@ document.body.append(boards);
 user.playerBoard.printBoard(user.name, boards);
 computer.playerBoard.printBoard(computer.name, boards);
 
-user.playerBoard.addShipEventListener(user, user.playerBoard.carrierFunction, 'horizontal')
+computer.randomPlacement(computer)
 
+user.playerBoard.addShipEventListener(user, user.playerBoard.carrierFunction, user.playerBoard.shipOrientation, 5)
 let commandBox = document.getElementById('commandBox');
 commandBox.innerText = 'Place your carrier ship'
 

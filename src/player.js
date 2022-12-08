@@ -85,6 +85,50 @@ class Player {
     }
   }
 
+  randomPlacement(computer) {
+    while(computer.carrierPlaced === false) {
+      let array = ['horizontal', 'vertical']
+      let arrayIndex = Math.floor(Math.random()*array.length);
+      let orientation = array[arrayIndex];
+      let row = Math.floor(Math.random() * 10);
+      let column = Math.floor(Math.random() * 10);
+      computer.placeCarrier(row, column, orientation)
+    }
+    while(computer.battleshipPlaced === false) {
+      let array = ['horizontal', 'vertical']
+      let arrayIndex = Math.floor(Math.random()*array.length);
+      let orientation = array[arrayIndex];
+      let row = Math.floor(Math.random() * 10);
+      let column = Math.floor(Math.random() * 10);
+      computer.placeBattleship(row, column, orientation)
+    }
+    while(computer.cruiserPlaced === false) {
+      let array = ['horizontal', 'vertical']
+      let arrayIndex = Math.floor(Math.random()*array.length);
+      let orientation = array[arrayIndex];
+      let row = Math.floor(Math.random() * 10);
+      let column = Math.floor(Math.random() * 10);
+      computer.placeCruiser(row, column, orientation)
+    }
+    while(computer.submarinePlaced === false) {
+      let array = ['horizontal', 'vertical']
+      let arrayIndex = Math.floor(Math.random()*array.length);
+      let orientation = array[arrayIndex];
+      let row = Math.floor(Math.random() * 10);
+      let column = Math.floor(Math.random() * 10);
+      computer.placeSubmarine(row, column, orientation)
+    }
+    while(computer.destroyerPlaced === false) {
+      let array = ['horizontal', 'vertical']
+      let arrayIndex = Math.floor(Math.random()*array.length);
+      let orientation = array[arrayIndex];
+      let row = Math.floor(Math.random() * 10);
+      let column = Math.floor(Math.random() * 10);
+      computer.placeDestroyer(row, column, orientation)
+    }
+    console.log(computer.playerBoard.boardArray)
+  }
+
   //send attack
 }
 
