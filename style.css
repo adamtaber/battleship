@@ -1,7 +1,33 @@
+.game-title {
+  text-align: center;
+}
+
+.command-box {
+  text-align: center;
+  font-size: 20px;
+}
+
+.boards {
+  display: flex;
+  gap: 100px;
+  justify-content: center;
+}
+
+.board-title {
+  font-size: 20px;
+  text-align: center;
+}
 
 .grid-container {
   display: grid;
   border-style: solid;
+  border-width: thin;
   width: 500px;
   height: 500px;
+  grid-template-columns: repeat(10, auto);
+}
+
+.grid-square {
+  border-style: solid;
+  border-width: thin;
 }

@@ -34,5 +34,16 @@ let user = new Player('player 1');
 let computer = new Player('computer');
 user.createPlayerBoard();
 computer.createPlayerBoard();
-user.playerBoard.printBoard();
+
+let boards = document.createElement('div');
+boards.classList.add('boards');
+document.body.append(boards);
+
+user.playerBoard.printBoard(user.name, boards);
+computer.playerBoard.printBoard(computer.name, boards);
+
+user.playerBoard.addShipEventListener(user, user.playerBoard.carrierFunction, 'horizontal')
+
+let commandBox = document.getElementById('commandBox');
+commandBox.innerText = 'Place your carrier ship'
 
