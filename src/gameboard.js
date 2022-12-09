@@ -282,14 +282,14 @@ class GameboardFactory {
           square.classList.remove('attack-hover');
         })
         square.addEventListener('click', () => {
-          computer.playerBoard.visualizePlayerAttack(computer, square, i, j);
-          user.playerBoard.visualizeComputerAttack(user, computer)
+          computer.playerBoard.visualizePlayerAttack(user, computer, square, i, j);
+          // computer.playerBoard.visualizeComputerAttack(user, computer)
         })
       }
     }
   }
 
-  visualizePlayerAttack(computer, square, i, j) {
+  visualizePlayerAttack(user, computer, square, i, j) {
     if(computer.playerBoard.boardArray[i][j][1] === 'hit' ||
     computer.playerBoard.boardArray[i][j] === 'miss') {
       return
@@ -313,6 +313,8 @@ class GameboardFactory {
         computer.playerBoard.removeShipEventListener(computer);
       }
     }
+
+    computer.playerBoard.visualizeComputerAttack(user, computer)
   }
 
   visualizeComputerAttack(user, computer) {
@@ -343,12 +345,16 @@ class GameboardFactory {
       if(user.playerBoard.shipsSunk === true) {
         let commandBox = document.getElementById('commandBox');
         commandBox.innerText = 'The enemy has sunk all of your ships!'
-        computer.playerBoard.removeShipEventListener(computer);
+        for (let i = 0; i < this.boardArray.length; i++) {
+          for (let j = 0; j < this.boardArray[0].length; j++) {
+            let square = document.getElementById(`computersquare${i}${j}`)
+            let new_square = square.cloneNode(true);
+            square.parentNode.replaceChild(new_square, square);
+          }
+        }
+        
       }
     }
-
-
-
   }
 
   colorSunkShip(computer, ship) {
