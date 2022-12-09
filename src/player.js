@@ -10,6 +10,7 @@ class Player {
     this.cruiserPlaced = false
     this.submarinePlaced = false
     this.destroyerPlaced = false
+    this.allShipsPlaced = false
   }
 
   createPlayerBoard() {

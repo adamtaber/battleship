@@ -30,21 +30,37 @@ import Player from './player.js';
 // console.log(player.placeBattleship(4, 1, 'vertical'))
 // console.log(player.placeSubmarine(6, 1, 'vertical'));
 
-let user = new Player('player 1');
+
+//create player objects and boards
+let user = new Player('player');
 let computer = new Player('computer');
 user.createPlayerBoard();
 computer.createPlayerBoard();
 
+//print boards to the DOM
 let boards = document.createElement('div');
 boards.classList.add('boards');
 document.body.append(boards);
-
 user.playerBoard.printBoard(user.name, boards);
 computer.playerBoard.printBoard(computer.name, boards);
 
+//place computer ships in array
 computer.randomPlacement(computer)
 
-user.playerBoard.addShipEventListener(user, user.playerBoard.carrierFunction, user.playerBoard.shipOrientation, 5)
+//have player place ships
+user.playerBoard.addShipEventListener(user, user.playerBoard.carrierFunction, user.playerBoard.shipOrientation, 5, computer)
 let commandBox = document.getElementById('commandBox');
 commandBox.innerText = 'Place your carrier ship'
+
+//add event listener to enemy board accepting attacks
+
+function checkShips() {
+  if(user.allShipsPlaced === false) {
+    window.setTimeout(checkShips, 100);
+  } else {
+    computer.playerBoard.enemyBoardEventListener(computer, user);
+  }
+}
+
+checkShips();
 

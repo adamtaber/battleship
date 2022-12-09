@@ -6,6 +6,7 @@ class GameboardFactory {
     this.boardArray = []
     this.currentCoords = [0, 0]
     this.shipOrientation = 'horizontal'
+    this.shipsSunk = false
   }
 
   createBoard() {
@@ -16,12 +17,12 @@ class GameboardFactory {
 
   placeShipHorizontal(ship, length, row, column) {
     if ((length + column) - 1 > 10) {
-      console.log('this ship is too long for this space');
+      // console.log('this ship is too long for this space');
       return false;
     }
     for (let i = 0; i < length; i++) {
       if (this.boardArray[row][column + i] !== '') {
-        console.log('there is a ship in the way');
+        // console.log('there is a ship in the way');
         return false;
       }
     }
@@ -32,12 +33,12 @@ class GameboardFactory {
 
   placeShipVertical(ship, length, row, column) {
     if ((row - length) + 1 < 0) {
-      console.log('this ship is too long for this space');
+      // console.log('this ship is too long for this space');
       return false;
     }
     for (let i = 0; i < length; i++) {
       if (this.boardArray[row - i][column] !== '') {
-        console.log('there is a ship in the way')
+        // console.log('there is a ship in the way')
         return false
       }
     }
@@ -56,17 +57,18 @@ class GameboardFactory {
   }
 
   allShipsSunk() {
-    let shipsSunk = true
+    let sunk = true
 
     for (let i = 0; i < this.boardArray.length; i++) {
       for (let j = 0; j < this.boardArray[0].length; j++) {
         if (this.boardArray[i][j][1] === 'not hit') {
-          shipsSunk = false
+          sunk = false
         }
       }
     }
 
-    return shipsSunk;
+    this.shipsSunk = sunk;
+    return sunk
   }
 
   printBoard(name, container) {
@@ -87,7 +89,7 @@ class GameboardFactory {
       for (let j = 0; j < this.boardArray[0].length; j++) {
         let square = document.createElement('div');
         square.classList.add('grid-square');
-        square.setAttribute('id', `square${i}${j}`)
+        square.setAttribute('id', `${name}square${i}${j}`)
         gridContainer.append(square);
       }
     }
@@ -97,10 +99,10 @@ class GameboardFactory {
     let commandBox = document.getElementById('commandBox');
     user.placeCarrier(i, j, orientation);
     if (user.carrierPlaced === true) {
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       user.playerBoard.addShipEventListener(user, user.playerBoard.battleshipFunction, user.playerBoard.shipOrientation, 4);
       commandBox.innerText = 'Place your battleship'
-      user.playerBoard.colorShipLocations();
+      user.playerBoard.colorShipLocations(user);
     } else {
       commandBox.innerText = 'Place your ship in a valid location'
     }
@@ -110,10 +112,10 @@ class GameboardFactory {
     let commandBox = document.getElementById('commandBox');
     user.placeBattleship(i, j, orientation);
     if (user.battleshipPlaced === true) {
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       user.playerBoard.addShipEventListener(user, user.playerBoard.cruiserFunction, user.playerBoard.shipOrientation, 3);
       commandBox.innerText = 'Place your cruiser'
-      user.playerBoard.colorShipLocations();
+      user.playerBoard.colorShipLocations(user);
     } else {
       commandBox.innerText = 'Place your ship in a valid location'
     }
@@ -123,10 +125,10 @@ class GameboardFactory {
     let commandBox = document.getElementById('commandBox');
     user.placeCruiser(i, j, orientation);
     if (user.cruiserPlaced === true) {
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       user.playerBoard.addShipEventListener(user, user.playerBoard.submarineFunction, user.playerBoard.shipOrientation, 3);
       commandBox.innerText = 'Place your submarine'
-      user.playerBoard.colorShipLocations();
+      user.playerBoard.colorShipLocations(user);
     } else {
       commandBox.innerText = 'Place your ship in a valid location'
     }
@@ -136,10 +138,10 @@ class GameboardFactory {
     let commandBox = document.getElementById('commandBox');
     user.placeSubmarine(i, j, orientation);
     if (user.submarinePlaced === true) {
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       user.playerBoard.addShipEventListener(user, user.playerBoard.destroyerFunction, user.playerBoard.shipOrientation, 2);
       commandBox.innerText = 'Place your destroyer'
-      user.playerBoard.colorShipLocations();
+      user.playerBoard.colorShipLocations(user);
     } else {
       commandBox.innerText = 'Place your ship in a valid location'
     }
@@ -149,12 +151,13 @@ class GameboardFactory {
     let commandBox = document.getElementById('commandBox');
     user.placeDestroyer(i, j, orientation);
     if (user.destroyerPlaced === true) {
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       commandBox.innerText = 'You may now attack the enemy'
-      user.playerBoard.colorShipLocations();
+      user.playerBoard.colorShipLocations(user);
       let button = document.getElementById('orientation')
       let newButton = button.cloneNode(true)
       button.parentNode.replaceChild(newButton, button);
+      user.allShipsPlaced = true;
     } else {
       commandBox.innerText = 'Place your ship in a valid location'
     }
@@ -163,24 +166,24 @@ class GameboardFactory {
   addShipEventListener(user, shipFunction, orientation, length) {
     for (let i = 0; i < this.boardArray.length; i++) {
       for (let j = 0; j < this.boardArray[0].length; j++) {
-        let square = document.getElementById(`square${i}${j}`)
+        let square = document.getElementById(`${user.name}square${i}${j}`)
         square.addEventListener('click', () => {
           shipFunction(user, orientation, i, j)
           console.log(this.boardArray);
         })
         if(orientation === 'horizontal') {
           square.addEventListener('mouseover', () => {
-            user.playerBoard.addHoverHorizontal(i, j, length)
+            user.playerBoard.addHoverHorizontal(user, i, j, length)
           })
           square.addEventListener('mouseout', () => {
-            user.playerBoard.removeHoverHorizontal(i, j, length);
+            user.playerBoard.removeHoverHorizontal(user, i, j, length);
           })
         } else {
           square.addEventListener('mouseover', () => {
-            user.playerBoard.addHoverVertical(i, j, length)
+            user.playerBoard.addHoverVertical(user, i, j, length)
           })
           square.addEventListener('mouseout', () => {
-            user.playerBoard.removeHoverVertical(i, j, length);
+            user.playerBoard.removeHoverVertical(user, i, j, length);
           })
         }
       }
@@ -188,20 +191,20 @@ class GameboardFactory {
     user.playerBoard.orientationEventListener(user, shipFunction, length)
   }
 
-  removeShipEventListener() {
+  removeShipEventListener(user) {
     for (let i = 0; i < this.boardArray.length; i++) {
       for (let j = 0; j < this.boardArray[0].length; j++) {
-        let square = document.getElementById(`square${i}${j}`)
+        let square = document.getElementById(`${user.name}square${i}${j}`)
         let new_square = square.cloneNode(true);
         square.parentNode.replaceChild(new_square, square);
       }
     }
   }
 
-  colorShipLocations() {
+  colorShipLocations(user) {
     for (let i = 0; i < this.boardArray.length; i++) {
       for (let j = 0; j < this.boardArray[0].length; j++) {
-        let square = document.getElementById(`square${i}${j}`)
+        let square = document.getElementById(`${user.name}square${i}${j}`)
         if (this.boardArray[i][j][0] instanceof BattleshipFactory) {
           square.classList.add('ship-placed')
         }
@@ -209,44 +212,44 @@ class GameboardFactory {
     }
   }
 
-  addHoverHorizontal(i, j, length) {
+  addHoverHorizontal(user, i, j, length) {
     let fakeLength = length
     if(j + (fakeLength - 1) < 10) {
       while (fakeLength > 0) {
-        let box = document.getElementById(`square${i}${j + (fakeLength - 1)}`)
+        let box = document.getElementById(`${user.name}square${i}${j + (fakeLength - 1)}`)
         box.classList.add('ship-hover');
         fakeLength -= 1;
       }
     }
   }
 
-  addHoverVertical(i, j, length) {
+  addHoverVertical(user, i, j, length) {
     let fakeLength = length
     if(i - (fakeLength - 1) >= 0) {
       while (fakeLength > 0) {
-        let box = document.getElementById(`square${i - (fakeLength - 1)}${j}`)
+        let box = document.getElementById(`${user.name}square${i - (fakeLength - 1)}${j}`)
         box.classList.add('ship-hover');
         fakeLength -= 1;
       }
     }
   }
 
-  removeHoverHorizontal(i, j, length) {
+  removeHoverHorizontal(user, i, j, length) {
     let fakeLength = length
     if(j + (fakeLength - 1) < 10) {
       while (fakeLength > 0) {
-        let box = document.getElementById(`square${i}${j + (fakeLength - 1)}`)
+        let box = document.getElementById(`${user.name}square${i}${j + (fakeLength - 1)}`)
         box.classList.remove('ship-hover');
         fakeLength -= 1;
       }
     }
   }
 
-  removeHoverVertical(i, j, length) {
+  removeHoverVertical(user, i, j, length) {
     let fakeLength = length
     if(i - (fakeLength - 1) >= 0) {
       while (fakeLength > 0) {
-        let box = document.getElementById(`square${i - (fakeLength - 1)}${j}`)
+        let box = document.getElementById(`${user.name}square${i - (fakeLength - 1)}${j}`)
         box.classList.remove('ship-hover');
         fakeLength -= 1;
       }
@@ -263,36 +266,101 @@ class GameboardFactory {
       } else {
         user.playerBoard.shipOrientation = 'horizontal'
       }
-      user.playerBoard.removeShipEventListener();
+      user.playerBoard.removeShipEventListener(user);
       user.playerBoard.addShipEventListener(user, shipFunction, user.playerBoard.shipOrientation, length);
     })
   }
 
-  // colorShipHoverHorizontal(length, l, m) {
-  //   for (let i = m; i < length + 1; i++) {
-  //     let square = document.getElementById(`square${l}${m}`)
-  //     square.addEventListener('mouseover', () => {
-  //       square.classList.add('ship-hover');
-  //     })
-  //     square.addEventListener('mouseout',() => {
-  //       square.classList.remove('ship-hover');
-  //     })
-  //   }
-  // }
+  enemyBoardEventListener(computer, user) {
+    for (let i = 0; i < this.boardArray.length; i++) {
+      for (let j = 0; j < this.boardArray[0].length; j++) {
+        let square = document.getElementById(`${computer.name}square${i}${j}`)
+        square.addEventListener('mouseover', () => {
+          square.classList.add('attack-hover');
+        })
+        square.addEventListener('mouseout', () => {
+          square.classList.remove('attack-hover');
+        })
+        square.addEventListener('click', () => {
+          computer.playerBoard.visualizePlayerAttack(computer, square, i, j);
+          user.playerBoard.visualizeComputerAttack(user, computer)
+        })
+      }
+    }
+  }
 
-  // addShipEventListener() {
-  //   for (let i = 0; i < this.boardArray.length; i++) {
-  //     for (let j = 0; j < this.boardArray[0].length; j++) {
-  //       let square = document.getElementById(`square${i}${j}`)
-  //       square.addEventListener('click', () => {
-  //         this.currentCoords = [i, j]
-  //       })
-  //       square.addEventListener('mouseover', () => {
-  //         this.currentCoords = [i, j]
-  //       })
-  //     }
-  //   }
-  // }
+  visualizePlayerAttack(computer, square, i, j) {
+    if(computer.playerBoard.boardArray[i][j][1] === 'hit' ||
+    computer.playerBoard.boardArray[i][j] === 'miss') {
+      return
+    } else {
+      computer.playerBoard.receiveAttack(i, j)
+    }
+
+    if(computer.playerBoard.boardArray[i][j] === 'miss') {
+      square.classList.add('miss-ship');
+    } else if (computer.playerBoard.boardArray[i][j][1] === 'hit') {
+      square.classList.add('hit-ship');
+    }
+
+    if(computer.playerBoard.boardArray[i][j][0].sunk === true) {
+      let commandBox = document.getElementById('commandBox');
+      commandBox.innerText = `You have sunk the enemy ${computer.playerBoard.boardArray[i][j][0].name}`
+      computer.playerBoard.colorSunkShip(computer, computer.playerBoard.boardArray[i][j][0])
+      computer.playerBoard.allShipsSunk();
+      if(computer.playerBoard.shipsSunk === true) {
+        commandBox.innerText = 'You have sunk all of the enemy ships!';
+        computer.playerBoard.removeShipEventListener(computer);
+      }
+    }
+  }
+
+  visualizeComputerAttack(user, computer) {
+    let array = user.playerBoard.boardArray
+    let computerChoices = array.slice(0);
+    let row = Math.floor(Math.random() * computerChoices.length)
+    let column = Math.floor(Math.random() * computerChoices.length)
+
+    if(user.playerBoard.boardArray[row][column][1] === 'hit' ||
+    user.playerBoard.boardArray[row][column] === 'miss') {
+      user.playerBoard.visualizeComputerAttack(user)
+    } else {
+      user.playerBoard.receiveAttack(row, column);
+      computerChoices[row].slice(column);
+    }
+
+    let square = document.getElementById(`${user.name}square${row}${column}`)
+
+    if(user.playerBoard.boardArray[row][column] === 'miss') {
+      square.classList.add('miss-ship');
+    } else if (user.playerBoard.boardArray[row][column][1] === 'hit') {
+      square.classList.add('hit-ship');
+    }
+
+    if(user.playerBoard.boardArray[row][column][0].sunk === true) {
+      user.playerBoard.colorSunkShip(user, user.playerBoard.boardArray[row][column][0])
+      user.playerBoard.allShipsSunk();
+      if(user.playerBoard.shipsSunk === true) {
+        let commandBox = document.getElementById('commandBox');
+        commandBox.innerText = 'The enemy has sunk all of your ships!'
+        computer.playerBoard.removeShipEventListener(computer);
+      }
+    }
+
+
+
+  }
+
+  colorSunkShip(computer, ship) {
+    for (let i = 0; i < this.boardArray.length; i++) {
+      for (let j = 0; j < this.boardArray[0].length; j++) {
+        let square = document.getElementById(`${computer.name}square${i}${j}`)
+        if (computer.playerBoard.boardArray[i][j][0] === ship) {
+          square.classList.add('ship-sunk');
+        }
+      }
+    }
+  }
 }
 
 export default GameboardFactory;

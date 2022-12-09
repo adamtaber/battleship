@@ -46,3 +46,19 @@
   background-color: black;
 }
 
+.attack-hover {
+  background-color: lightgrey;
+}
+
+.miss-ship {
+  background-color: darkgrey;
+}
+
+.hit-ship {
+  background-color: red;
+}
+
+.ship-sunk {
+  background-color: darkred;
+}
+
